@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update Movie</title>
+</head>
+<body>
+
+<h1>Update Movie</h1>
+
+<form id="updateMovieForm" method="post" action="/update_movie">
+    <label for="movieName">Movie Name:</label>
+    <input type="text" id="movieName" name="movieName" required>
+    <button type="button" onclick="searchMovie()">Search Movie</button><br>
+    <br>
+    <div id="updateFields" style="display: none;">
+
+        <label for="director">Updated Name:</label>
+        <input type="text" id="name" name="name" required>
+        <br>
+        <label for="director">Updated Director:</label>
+        <input type="text" id="director" name="director" required><br>
+
+        <label for="releaseYear">Updated Release Year:</label>
+        <input type="text" id="releaseYear" name="releaseYear" required><br>
+
+        <label for="language">Updated Language:</label>
+        <input type="text" id="language" name="language" required><br>
+
+        <label for="rating">Updated Rating:</label>
+        <input type="text" id="rating" name="rating" required><br>
+        <input type="submit" value="Submit">
+
+        <div id="updateMessage"></div>
+    </div>
+        <br><br>
+    <a href="/movies">
+        <button type="button">Show All Movies</button>
+    </a>
+    <a href="/">
+        <button type="button">Home</button>
+    </a>
+</form>
+
+<script>
+    async function searchMovie() {
+        const movieName = document.getElementById('movieName').value;
+
+        // Fetch movie details by name from the server
+        try {
+            const response = await fetch('/search_movie', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ search_criteria: movieName }),
+            });
+
+            if (response.ok) {
+                const movieDetails = await response.json();
+                displayUpdateFields(movieDetails);
+            } else {
+                console.error('Error searching for movie:', response.status);
+            }
+        } catch (error) {
+            console.error('Error searching for movie:', error);
+        }
+    }
+
+    function displayUpdateFields(movieDetails) {
+        const updateFieldsDiv = document.getElementById('updateFields');
+        const updateMessageDiv = document.getElementById('updateMessage');
+
+        if (movieDetails) {
+            // Display the update fields
+            updateFieldsDiv.style.display = 'block';
+
+            // Set values for existing movie details
+            document.getElementById('name').value = movieDetails.name;
+            document.getElementById('director').value = movieDetails.director;
+            document.getElementById('releaseYear').value = movieDetails.release_year;
+            document.getElementById('language').value = movieDetails.language;
+            document.getElementById('rating').value = movieDetails.rating;
+
+            // Clear previous update messages
+            updateMessageDiv.innerHTML = '';
+        } else {
+            // Hide the update fields
+            updateFieldsDiv.style.display = 'none';
+
+            // Display a message if the movie is not found
+            updateMessageDiv.innerHTML = 'Movie not found';
+        }
+    }
+    async function updateMovie() {
+        const movieName = document.getElementById('movieName').value;
+        const updatedDetails = {
+            name: document.getElementById('name').value,
+            director: document.getElementById('director').value,
+            releaseYear: document.getElementById('releaseYear').value,
+            language: document.getElementById('language').value,
+            rating: document.getElementById('rating').value,
+        };
+
+        try {
+          const form = document.querySelector('form');
+
+            form.addEventListener('submit', async function (event) {
+                event.preventDefault();
+
+                const formData = new FormData(form);
+                const response = await fetch('/update_movie', {
+                    method: 'POST',
+                    body: formData
+                });
+                form.reset();
+            });
+
+            if (response.ok) {
+                console.log('Movie updated successfully');
+                document.getElementById('updateMessage').innerHTML = 'Movie updated';
+            } else {
+                console.error('Error updating movie:', response.status);
+            }
+        } catch (error) {
+            console.error('Error updating movie:', error);
+        }
+    }
+
+</script>
+
+</body>
+</html>

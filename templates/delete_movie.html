@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delete Movie</title>
+</head>
+<body>
+
+<h1>Delete Movie</h1>
+
+<form method="post" id="deleteMovieForm" action="/delete_movie">
+    <label for="deleteMovieName">Movie Name to Delete:</label>
+    <input type="text" id="deleteMovieName" name="deleteMovieName" required>
+    <input type="submit" value="Submit">
+    <br>
+    <br>
+    <a href="/movies">
+        <button type="button">Show All Movies</button>
+    </a>
+    <a href="/">
+        <button type="button">Home</button>
+    </a>
+    <div id="deleteMessage"></div>
+</form>
+
+<script>
+    async function deleteMovie() {
+        const deleteMovieName = document.getElementById('deleteMovieName').value;
+
+        try {
+            const form = document.querySelector('form');
+
+            form.addEventListener('submit', async function (event) {
+                event.preventDefault();
+
+                const formData = new FormData(form);
+                const response = await fetch('/delete_movie', {
+                    method: 'POST',
+                    body: formData
+                });
+                form.reset();
+            });
+
+            if (response.ok) {
+                console.log('Movie deleted successfully');
+                document.getElementById('deleteMessage').innerHTML = 'Movie deleted';
+            } else {
+                console.error('Error deleting movie:', response.status);
+            }
+        } catch (error) {
+            console.error('Error deleting movie:', error);
+        }
+    }
+</script>
+
+</body>
+</html>

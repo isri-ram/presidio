@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Display Movies</title>
+    <!-- Add Bootstrap CDN link for styling -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+
+<div class="container mt-5">
+    <h1 class="mb-4">Movies Information</h1>
+
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Director</th>
+                <th>Release Year</th>
+                <th>Language</th>
+                <th>Rating</th>
+            </tr>
+        </thead>
+        <tbody id="moviesTableBody">
+            <!-- Movie data will be dynamically inserted here -->
+        </tbody>
+    </table>
+</div>
+
+<!-- Add Bootstrap JS and Popper.js CDN links for Bootstrap functionality -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<script>
+
+    // Function to fetch data from movies.json
+    async function fetchMovies() {
+        try {
+            const response = await fetch('static/movies.json');
+            const movies = await response.json();
+            console.log('Movies:', movies);  // Log the retrieved movies
+            return movies;
+        } catch (error) {
+            console.error('Error fetching movies:', error);
+        }
+    }
+
+    // Function to populate the table with movie data
+    async function populateTable() {
+        const tableBody = document.getElementById('moviesTableBody');
+        const movies = await fetchMovies();
+
+        if (movies) {
+            console.log('Populating table with movies:', movies);  // Log the movies being used
+
+            movies.forEach(movie => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${movie.name}</td>
+                    <td>${movie.director}</td>
+                    <td>${movie.release_year}</td>
+                    <td>${movie.language}</td>
+                    <td>${movie.rating}</td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+    }
+
+    // Call the function to populate the table when the page is loaded
+    window.onload = populateTable;
+
+</script>
+</body>
+</html>
